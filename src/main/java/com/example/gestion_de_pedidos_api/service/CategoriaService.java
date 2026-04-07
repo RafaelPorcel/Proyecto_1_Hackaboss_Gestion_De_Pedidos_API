@@ -30,12 +30,4 @@ public class CategoriaService {
     public Categoria obtenerPorId(Long id){
         return categoriaRepository.findById(id).orElseThrow(()->new RuntimeException("Categoria no encontrada"));
     }
-//    Listar productos por categoría
-public List<Producto> listarProductosPorCategoria(Long idCategoria) {
-
-    Categoria categoria = categoriaRepository.findById(idCategoria)
-            .orElseThrow(() -> new RuntimeException("Categoría no encontrada"));
-
-    return categoria.getProductos();
-}
 }
