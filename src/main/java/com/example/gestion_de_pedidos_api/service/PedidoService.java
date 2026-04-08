@@ -2,7 +2,9 @@ package com.example.gestion_de_pedidos_api.service;
 
 import com.example.gestion_de_pedidos_api.dto.CrearPedidoDto;
 import com.example.gestion_de_pedidos_api.dto.PedidoDto;
+import com.example.gestion_de_pedidos_api.dto.PedidoProductoRequestDto;
 import com.example.gestion_de_pedidos_api.dto.ProductosPedidoDto;
+import com.example.gestion_de_pedidos_api.exception.BadRequestException;
 import com.example.gestion_de_pedidos_api.exception.ResourceNotFoundException;
 import com.example.gestion_de_pedidos_api.model.*;
 import com.example.gestion_de_pedidos_api.repository.PedidoProductoRepository;
@@ -11,12 +13,11 @@ import com.example.gestion_de_pedidos_api.repository.ProductoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 public class PedidoService {
@@ -91,6 +92,64 @@ public class PedidoService {
     }
 
 
+
+    // Añadir productos a un pedido (creacion de PedidoProducto)
+    public ProductosPedidoDto agregarProductosAPedido(Long idPedido, PedidoProductoRequestDto dto) {
+        Pedido pedido = pedidoRepository.findById(idPedido)
+                .orElseThrow(() -> new ResourceNotFoundException("El pedido con id " + idPedido + " no ha sido encontrado"));
+
+        Producto producto = productoRepository.findById(dto.getProductoId())
+                .orElseThrow(() -> new ResourceNotFoundException("El producto con id " + dto.getProductoId() + " no ha sido encontrado"));
+
+        // Comprobar si el producto no está activo
+        if (!producto.isActivo()) {
+            throw new BadRequestException("El producto no está activo");
+        }
+
+        // Buscar si ya existe el producto en el pedido
+        Optional<PedidoProducto> existente = pedido.getLineasPedido().stream()
+                .filter(pp -> pp.getProducto().getId().equals(producto.getId()))
+                .findFirst();
+
+        PedidoProducto pedidoProducto;
+
+        if (existente.isPresent()) {
+            // Si ya existe se suma la cantidad introducida de producto a lo anterior
+            pedidoProducto = existente.get();
+            pedidoProducto.setCantidad(pedidoProducto.getCantidad() + dto.getCantidad());
+        } else {
+            // Si no existe se crea una nueva linea del producto
+            pedidoProducto = new PedidoProducto();
+            pedidoProducto.setPedido(pedido);
+            pedidoProducto.setProducto(producto);
+            pedidoProducto.setCantidad(dto.getCantidad());
+            pedidoProducto.setPrecioUnitario(producto.getPrecio()); // Se guarda el precio en el momento del pedido
+
+            pedido.getLineasPedido().add(pedidoProducto);
+        }
+
+        pedidoRepository.save(pedido);
+
+        return pedidoProductoToDto(pedidoProducto);
+    }
+
+    // Calculo del total del pedido
+    public Double calcularTotalDelPedido(Pedido pedido) {
+        double total = pedido.getLineasPedido().stream()
+                .mapToDouble(pp -> pp.getPrecioUnitario() * pp.getCantidad())
+                .sum();
+
+        // Total redondeado a dos decimales de manera que quede realista en terminos de dinero
+        return BigDecimal.valueOf(total)
+                .setScale(2, RoundingMode.HALF_UP)
+                .doubleValue();
+    }
+
+    //Gestion del cambio de estados (PREPARACION -> LISTO -> ENTREGADO)
+    public void gestionarEstadosDelPedido() {
+
+    }
+
     // *** MÉTODOS DE MAPEO ***
 
     //Método para transformar un Pedido en PedidoDto
@@ -125,7 +184,5 @@ public class PedidoService {
 
         return pedidoProductoToDto;
     }
-
-
 
 }
