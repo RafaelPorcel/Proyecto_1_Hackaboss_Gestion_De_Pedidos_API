@@ -179,7 +179,7 @@ public class PedidoService {
         pedidoProductoToDto.setCantidad(linea.getCantidad());
         pedidoProductoToDto.setPrecioUnitario(linea.getPrecioUnitario());
 
-        // Calculamos el subtotal de esta linea de pedido
+        // Calculamos el subtotal de esta línea de pedido
         pedidoProductoToDto.setSubtotal(linea.getCantidad() * linea.getPrecioUnitario());
 
         return pedidoProductoToDto;
