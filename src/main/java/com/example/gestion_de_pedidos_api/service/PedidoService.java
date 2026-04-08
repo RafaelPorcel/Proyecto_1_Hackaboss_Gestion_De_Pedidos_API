@@ -77,11 +77,11 @@ public class PedidoService {
             lineasPedido.add(lineaPedido);
 
         }
-
-        nuevoPedido.setTotal(precioTotal);
-        nuevoPedido.setEstadoPedido(EstadoPedido.CREADO);
         //Aquí se añaden todas las líneas de pedido al Pedido
         nuevoPedido.setLineasPedido(lineasPedido);
+        //Cuando el pedido tiene sus productos calculamos el total mediante el metodo
+        nuevoPedido.setTotal(calcularTotalDelPedido(nuevoPedido));
+        nuevoPedido.setEstadoPedido(EstadoPedido.CREADO);
 
         //Guardamos el pedido en el repositorio
         Pedido pedidoGuardado = pedidoRepository.save(nuevoPedido);
