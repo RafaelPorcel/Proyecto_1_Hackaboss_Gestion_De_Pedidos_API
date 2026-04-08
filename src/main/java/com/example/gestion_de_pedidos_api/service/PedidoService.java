@@ -7,7 +7,6 @@ import com.example.gestion_de_pedidos_api.dto.ProductosPedidoDto;
 import com.example.gestion_de_pedidos_api.exception.BadRequestException;
 import com.example.gestion_de_pedidos_api.exception.ResourceNotFoundException;
 import com.example.gestion_de_pedidos_api.model.*;
-import com.example.gestion_de_pedidos_api.repository.PedidoProductoRepository;
 import com.example.gestion_de_pedidos_api.repository.PedidoRepository;
 import com.example.gestion_de_pedidos_api.repository.ProductoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +14,6 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -29,13 +27,12 @@ public class PedidoService {
     // Para poder acceder a los productos y ver su precio
     @Autowired
     private ProductoRepository productoRepository;
-    //Para poder guardar cada linea de pedido
-    @Autowired
-    private PedidoProductoRepository pedidoProductoRepository;
 
     //Método listar todos los pedidos
-    public List<Pedido> listarPedidos() {
-        return pedidoRepository.findAll();
+    public List<PedidoDto> listarPedidos() {
+        return pedidoRepository.findAll().stream()
+                .map(this::pedidoToPedidoDto) // Transformamos cada Pedido en PedidoDto
+                .toList();
     }
 
     //Método registrar un pedido
@@ -50,7 +47,7 @@ public class PedidoService {
         nuevoPedido.setTerminal(terminalUsada);
 
         List<PedidoProducto> lineasPedido = new ArrayList<>();//creamos la lista de lineas de pedido
-        double precioTotal = 0.0;
+
 
         //Recorremos el Map que contiene la info de qué productos y cuantos compra el cliente
         for (Map.Entry<Long, Integer> entry : crearPedidoDto.getProductosComprados().entrySet()) {
@@ -61,6 +58,11 @@ public class PedidoService {
             Producto productoComprado = productoRepository.findById(productoCompradoId)
                     .orElseThrow(() -> new ResourceNotFoundException("Producto con id: " + productoCompradoId + " no encontrado"));
 
+            //Validar que el producto esté activo
+            if (!productoComprado.isActivo()) {
+                throw new BadRequestException("El producto " + productoComprado.getNombre() + " no está activo");
+            }
+
             //Creamos una lineaPedido que hay que agregarle a la lista de líneas de pedido
             PedidoProducto lineaPedido = new PedidoProducto();
 
@@ -70,8 +72,7 @@ public class PedidoService {
             lineaPedido.setPedido(nuevoPedido);
             lineaPedido.setProducto(productoComprado);
 
-            //Calculamos el precio total multiplicandolo por cantidad de productos
-            precioTotal += productoComprado.getPrecio()*cantidadCompradaProducto;
+
 
             //Añadimos la lineaPedido a la lista de lineasPedido creada arriba
             lineasPedido.add(lineaPedido);
@@ -90,7 +91,6 @@ public class PedidoService {
         return pedidoToPedidoDto(pedidoGuardado);
 
     }
-
 
 
     // Añadir productos a un pedido (creacion de PedidoProducto)
