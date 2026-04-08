@@ -7,7 +7,6 @@ import com.example.gestion_de_pedidos_api.dto.ProductosPedidoDto;
 import com.example.gestion_de_pedidos_api.exception.BadRequestException;
 import com.example.gestion_de_pedidos_api.exception.ResourceNotFoundException;
 import com.example.gestion_de_pedidos_api.model.*;
-import com.example.gestion_de_pedidos_api.repository.PedidoProductoRepository;
 import com.example.gestion_de_pedidos_api.repository.PedidoRepository;
 import com.example.gestion_de_pedidos_api.repository.ProductoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +14,6 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -29,13 +27,12 @@ public class PedidoService {
     // Para poder acceder a los productos y ver su precio
     @Autowired
     private ProductoRepository productoRepository;
-    //Para poder guardar cada linea de pedido
-    @Autowired
-    private PedidoProductoRepository pedidoProductoRepository;
 
     //Método listar todos los pedidos
-    public List<Pedido> listarPedidos() {
-        return pedidoRepository.findAll();
+    public List<PedidoDto> listarPedidos() {
+        return pedidoRepository.findAll().stream()
+                .map(this::pedidoToPedidoDto) // Transformamos cada Pedido en PedidoDto
+                .toList();
     }
 
     //Método registrar un pedido
@@ -45,12 +42,12 @@ public class PedidoService {
         Pedido nuevoPedido = new Pedido();//Creamos un nuevo pedido y ahora lo armamos con los Dto
         //Asi sabemos el id de la terminal usada
         Terminal terminalUsada = terminalService.buscarTerminalPorId(crearPedidoDto.getTerminalId());
-        nuevoPedido.setCodigo("PED-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase());//Genera un código único
+        nuevoPedido.setCodigo("PED-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase()); //Genera un código único
         nuevoPedido.setFecha(LocalDateTime.now());
         nuevoPedido.setTerminal(terminalUsada);
 
         List<PedidoProducto> lineasPedido = new ArrayList<>();//creamos la lista de lineas de pedido
-        double precioTotal = 0.0;
+
 
         //Recorremos el Map que contiene la info de qué productos y cuantos compra el cliente
         for (Map.Entry<Long, Integer> entry : crearPedidoDto.getProductosComprados().entrySet()) {
@@ -61,6 +58,11 @@ public class PedidoService {
             Producto productoComprado = productoRepository.findById(productoCompradoId)
                     .orElseThrow(() -> new ResourceNotFoundException("Producto con id: " + productoCompradoId + " no encontrado"));
 
+            //Validar que el producto esté activo
+            if (!productoComprado.isActivo()) {
+                throw new BadRequestException("El producto " + productoComprado.getNombre() + " no está activo");
+            }
+
             //Creamos una lineaPedido que hay que agregarle a la lista de líneas de pedido
             PedidoProducto lineaPedido = new PedidoProducto();
 
@@ -70,18 +72,17 @@ public class PedidoService {
             lineaPedido.setPedido(nuevoPedido);
             lineaPedido.setProducto(productoComprado);
 
-            //Calculamos el precio total multiplicandolo por cantidad de productos
-            precioTotal += productoComprado.getPrecio()*cantidadCompradaProducto;
+
 
             //Añadimos la lineaPedido a la lista de lineasPedido creada arriba
             lineasPedido.add(lineaPedido);
 
         }
-
-        nuevoPedido.setTotal(precioTotal);
-        nuevoPedido.setEstadoPedido(EstadoPedido.CREADO);
         //Aquí se añaden todas las líneas de pedido al Pedido
         nuevoPedido.setLineasPedido(lineasPedido);
+        //Cuando el pedido tiene sus productos calculamos el total mediante el metodo
+        nuevoPedido.setTotal(calcularTotalDelPedido(nuevoPedido));
+        nuevoPedido.setEstadoPedido(EstadoPedido.CREADO);
 
         //Guardamos el pedido en el repositorio
         Pedido pedidoGuardado = pedidoRepository.save(nuevoPedido);
@@ -92,14 +93,13 @@ public class PedidoService {
     }
 
 
-
     // Añadir productos a un pedido (creacion de PedidoProducto)
     public ProductosPedidoDto agregarProductosAPedido(Long idPedido, PedidoProductoRequestDto dto) {
         Pedido pedido = pedidoRepository.findById(idPedido)
-                .orElseThrow(() -> new ResourceNotFoundException("El pedido con id " + idPedido + " no ha sido encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Pedido con id " + idPedido + " no encontrado"));
 
         Producto producto = productoRepository.findById(dto.getProductoId())
-                .orElseThrow(() -> new ResourceNotFoundException("El producto con id " + dto.getProductoId() + " no ha sido encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Producto con id " + dto.getProductoId() + " no encontrado"));
 
         // Comprobar si el producto no está activo
         if (!producto.isActivo()) {
@@ -145,9 +145,32 @@ public class PedidoService {
                 .doubleValue();
     }
 
-    //Gestion del cambio de estados (PREPARACION -> LISTO -> ENTREGADO)
-    public void gestionarEstadosDelPedido() {
+    // Gestion del cambio de estados de un pedido
+    public PedidoDto gestionarEstadoDelPedido(Long idPedido, EstadoPedido nuevoEstado) {
+        Pedido pedido = pedidoRepository.findById(idPedido)
+                .orElseThrow(() -> new ResourceNotFoundException("Pedido con id " + idPedido + " no encontrado"));
 
+        // Validar transición de estado
+        EstadoPedido estadoActual = pedido.getEstadoPedido();
+        /* estadoValido adquiere el valor true si el caso al que se expone es el que corresponde,
+        false si intenta cambiar a un estado que no es el siguiente en el orden */
+        boolean estadoValido = switch (estadoActual) {
+            case CREADO -> (nuevoEstado == EstadoPedido.PREPARACION);
+            case PREPARACION -> (nuevoEstado == EstadoPedido.LISTO);
+            case LISTO -> (nuevoEstado == EstadoPedido.PAGADO);
+            case PAGADO -> (nuevoEstado == EstadoPedido.ENTREGADO);
+            case ENTREGADO -> false;
+        };
+
+        if (!estadoValido) {
+            throw new BadRequestException("Transición de estado no permitida: " + estadoActual + " → " + nuevoEstado);
+        }
+
+        // Actualizar estado
+        pedido.setEstadoPedido(nuevoEstado);
+        pedidoRepository.save(pedido);
+
+        return pedidoToPedidoDto(pedido);
     }
 
     // *** MÉTODOS DE MAPEO ***
