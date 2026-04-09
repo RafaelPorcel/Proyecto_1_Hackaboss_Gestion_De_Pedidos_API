@@ -29,8 +29,17 @@ public class PedidoService {
     private ProductoRepository productoRepository;
 
     //Método listar todos los pedidos
-    public List<PedidoDto> listarPedidos() {
-        return pedidoRepository.findAll().stream()
+    public List<PedidoDto> listarPedidos(EstadoPedido estado) {
+        List<Pedido> pedidos;
+
+        // Si el estado tiene valor (se pide filtrar por estado) entonces devuelve la lista filtrada
+        if (estado != null) {
+            pedidos = pedidoRepository.findByEstadoPedidoOrderByFechaAsc(estado);
+        } else {
+            pedidos = pedidoRepository.findAllByOrderByFechaAsc();
+        }
+
+        return pedidos.stream()
                 .map(this::pedidoToPedidoDto) // Transformamos cada Pedido en PedidoDto
                 .toList();
     }
