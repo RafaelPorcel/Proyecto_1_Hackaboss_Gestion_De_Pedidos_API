@@ -1,9 +1,6 @@
 package com.example.gestion_de_pedidos_api.controller;
 
-import com.example.gestion_de_pedidos_api.dto.CrearPedidoDto;
-import com.example.gestion_de_pedidos_api.dto.PedidoDto;
-import com.example.gestion_de_pedidos_api.dto.PedidoProductoRequestDto;
-import com.example.gestion_de_pedidos_api.dto.ProductosPedidoDto;
+import com.example.gestion_de_pedidos_api.dto.*;
 import com.example.gestion_de_pedidos_api.model.EstadoPedido;
 import com.example.gestion_de_pedidos_api.service.PedidoService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,8 +33,8 @@ public class PedidoController {
     }
 
     @PatchMapping("/{pedidoId}/estado")
-    public ResponseEntity<PedidoDto> cambiarEstadoDelPedido(@PathVariable Long pedidoId, EstadoPedido nuevoEstado) {
-        return ResponseEntity.ok(pedidoService.gestionarEstadoDelPedido(pedidoId, nuevoEstado));
+    public ResponseEntity<PedidoDto> cambiarEstadoDelPedido(@PathVariable Long pedidoId, @RequestBody EstadoPedidoRequestDto dto) {
+        return ResponseEntity.ok(pedidoService.gestionarEstadoDelPedido(pedidoId, dto.getEstado()));
     }
 
     @GetMapping("/codigo/{codigo}")
