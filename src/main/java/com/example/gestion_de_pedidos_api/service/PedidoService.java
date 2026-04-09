@@ -135,7 +135,7 @@ public class PedidoService {
     }
 
     // Eliminar producto de un pedido
-    public void eliminarProductoDePedido(Long pedidoId, Long productoId) {
+    public ProductosPedidoDto eliminarProductoDePedido(Long pedidoId, Long productoId, PedidoProductoRequestDto dto) {
         // Buscar el pedido
         Pedido pedido = obtenerPedidoPorId(pedidoId);
 
@@ -145,14 +145,23 @@ public class PedidoService {
                 .findFirst()
                 .orElseThrow(() -> new ResourceNotFoundException("El producto con id " + productoId + " no está en el pedido"));
 
-        // Eliminar la linea
-        pedido.getLineasPedido().remove(linea);
+        int cantidadAEliminar = dto.getCantidad();
+
+        if (cantidadAEliminar >= linea.getCantidad()) {
+            // eliminar toda la línea
+            pedido.getLineasPedido().remove(linea);
+        } else {
+            // restar cantidad
+            linea.setCantidad(linea.getCantidad() - cantidadAEliminar);
+        }
 
         // Recalcular el total
         pedido.setTotal(calcularTotalDelPedido(pedido));
 
         // Guardar cambios
         pedidoRepository.save(pedido);
+
+        return pedidoProductoToDto(linea);
     }
 
     public PedidoDto obtenerPedidoPorCodigo(String codigo) {
