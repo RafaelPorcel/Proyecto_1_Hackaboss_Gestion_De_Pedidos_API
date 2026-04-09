@@ -11,7 +11,7 @@ import java.util.List;
 public class Terminal {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long Id;
+    private Long id;
     private String nombre;
     @OneToMany (mappedBy = "terminal")
     private List<Pedido> listaPedidos;
