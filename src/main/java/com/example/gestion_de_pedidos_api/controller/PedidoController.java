@@ -27,9 +27,8 @@ public class PedidoController {
     }
 
     @DeleteMapping("/{pedidoId}/productos/{productoId}")
-    public ResponseEntity<String> eliminarProductoDePedido(@PathVariable Long pedidoId, @PathVariable Long productoId) {
-        pedidoService.eliminarProductoDePedido(pedidoId, productoId);
-        return ResponseEntity.ok("Producto eliminado del pedido con éxito");
+    public ResponseEntity<ProductosPedidoDto> eliminarProductoDePedido(@PathVariable Long pedidoId, @PathVariable Long productoId, @RequestBody PedidoProductoRequestDto dto) {
+        return ResponseEntity.ok(pedidoService.eliminarProductoDePedido(pedidoId, productoId, dto));
     }
 
     @PatchMapping("/{pedidoId}/estado")
