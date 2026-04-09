@@ -12,7 +12,7 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
-@Table(name = "pedido")
+@Table(name = "pedidos")
 // Esta clase hace referencia al 'Ticket de compra' -> nuestro Pedido
 public class Pedido {
     @Id
