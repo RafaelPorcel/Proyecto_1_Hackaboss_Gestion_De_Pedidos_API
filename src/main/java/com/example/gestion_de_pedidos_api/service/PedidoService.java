@@ -243,11 +243,11 @@ public class PedidoService {
     }
 
     private ProductosPedidoDto pedidoProductoToDto(PedidoProducto linea) {
-        ProductosPedidoDto pedidoProductoToDto = new ProductosPedidoDto();
-        pedidoProductoToDto.setProductoId(linea.getProducto().getId());
-        pedidoProductoToDto.setNombreProducto(linea.getProducto().getNombre());
-        pedidoProductoToDto.setCantidad(linea.getCantidad());
-        pedidoProductoToDto.setPrecioUnitario(linea.getPrecioUnitario());
+        ProductosPedidoDto dto = new ProductosPedidoDto();
+        dto.setProductoId(linea.getProducto().getId());
+        dto.setNombreProducto(linea.getProducto().getNombre());
+        dto.setCantidad(linea.getCantidad());
+        dto.setPrecioUnitario(linea.getPrecioUnitario());
 
         // Calculamos el subtotal de esta línea de pedido
         dto.setSubtotal(linea.getCantidad() * linea.getPrecioUnitario());
