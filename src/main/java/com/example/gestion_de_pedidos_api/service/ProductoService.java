@@ -23,7 +23,6 @@ public class ProductoService {
 
     //Crear producto
     public ProductoDto crearProducto(CrearProductoDto dto) {
-
         Categoria categoria = categoriaRepository.findById(dto.getCategoriaId())
                 .orElseThrow(() -> new ResourceNotFoundException("Categoría no encontrada"));
 
@@ -34,7 +33,6 @@ public class ProductoService {
         producto.setCategoria(categoria);
 
         Producto guardado = productoRepository.save(producto);
-
         return toDto(guardado);
     }
 
@@ -42,7 +40,6 @@ public class ProductoService {
     public List<ProductoDto> listarProductos(Boolean activo, Long categoriaId, String orden, String tipoOrden) {
 
         List<Producto> productos = productoRepository.findAll();
-
         Stream<Producto> stream = productos.stream()
                 //    No filtramos a no ser que queramos seguro los activos.
                 .filter(p -> activo == null || p.isActivo() == activo)
@@ -50,18 +47,18 @@ public class ProductoService {
                 .filter(p -> categoriaId == null || p.getCategoria().getId().equals(categoriaId));
         // Por defecto ordena por nombre
         Comparator<Producto> comparator = Comparator.comparing(Producto::getNombre);
-
+        //  Hacemos un menu para elegir forma de ordenar
         if (orden != null) {
             switch (orden) {
                 case "precio":
                     //    Ordenamos por precio
                     comparator = Comparator.comparing(Producto::getPrecio);
                     break;
-                //    Ordenamos por categoria
+                    //    Ordenamos por categoria
                 case "categoria":
                     comparator = Comparator.comparing(p -> p.getCategoria().getNombre());
                     break;
-                //    Ordenamos por nombre
+                    //    Ordenamos por nombre
                 case "nombre":
                 default:
                     comparator = Comparator.comparing(Producto::getNombre);
@@ -71,7 +68,6 @@ public class ProductoService {
         if ("DESC".equalsIgnoreCase(tipoOrden)) {
             comparator = comparator.reversed();
         }
-
         return stream
                 .sorted(comparator)
                 .map(this::toDto)
@@ -79,26 +75,20 @@ public class ProductoService {
     }
 
     // Actualizar
-//    Recibeun CrearProductoDto para no duplicar
+    //    Recibe un CrearProductoDto para no duplicar
     public ProductoDto actualizarProducto(Long id, CrearProductoDto dto) {
 
         Producto producto = productoRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Producto no encontrado"));
-
         producto.setNombre(dto.getNombre());
         producto.setPrecio(dto.getPrecio());
         producto.setActivo(dto.getActivo());
-
         Categoria categoria = categoriaRepository.findById(dto.getCategoriaId())
                 .orElseThrow(() -> new ResourceNotFoundException("Categoría no encontrada"));
-
         producto.setCategoria(categoria);
-
         Producto guardado = productoRepository.save(producto);
-
         return toDto(guardado);
     }
-
 
     //    Desactiva un producto(borrado logico)
 
@@ -106,16 +96,19 @@ public class ProductoService {
 
         Producto producto = productoRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Producto no encontrado"));
-
         producto.setActivo(false);
-
         Producto guardado = productoRepository.save(producto);
-
         return toDto(guardado);
+    }
+    //  Activamos producto
+    public void activarProducto(Long id) {
+        Producto producto = productoRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Producto no encontrado"));
+        producto.setActivo(true);
+        productoRepository.save(producto);
     }
 
     //    Conversor a DTO
-
     private ProductoDto toDto(Producto producto) {
         ProductoDto dto = new ProductoDto();
         dto.setId(producto.getId());
@@ -125,7 +118,6 @@ public class ProductoService {
         if (producto.getCategoria() != null) {
             dto.setNombreCategoria(producto.getCategoria().getNombre());
         }
-
         return dto;
     }
 }

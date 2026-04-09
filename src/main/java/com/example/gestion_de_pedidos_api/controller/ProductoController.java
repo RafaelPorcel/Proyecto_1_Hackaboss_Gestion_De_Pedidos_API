@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/productos")
@@ -19,9 +20,12 @@ public class ProductoController {
 
     // Crear
     @PostMapping
-    public ResponseEntity<ProductoDto> crearProducto(@RequestBody CrearProductoDto dto) {
-        ProductoDto creado = productoService.crearProducto(dto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(creado);
+    public ResponseEntity<Map<String, Object>> crearProducto(@RequestBody CrearProductoDto dto) {
+        ProductoDto producto = productoService.crearProducto(dto);
+        return ResponseEntity.ok(
+                Map.of(
+                        "mensaje", "Producto creado correctamente",
+                        "data", producto));
     }
 
     // List con filtros
@@ -52,20 +56,26 @@ public class ProductoController {
 
     // Actualizar
     @PutMapping("/{id}")
-    public ResponseEntity<ProductoDto> actualizarProducto(
+    public ResponseEntity<Map<String, Object>> actualizarProducto(
             @PathVariable Long id,
-            @RequestBody CrearProductoDto dto
-    ) {
-        ProductoDto actualizado = productoService.actualizarProducto(id, dto);
-        return ResponseEntity.ok(actualizado);
+            @RequestBody CrearProductoDto dto) {
+        ProductoDto producto = productoService.actualizarProducto(id, dto);
+        return ResponseEntity.ok(Map.of("mensaje", "Producto actualizado correctamente",
+                        "data", producto));
     }
 
     // Desactivar producto. Borrado logico.
     // Patch por que no estamosa ctualizando todo el producto, solo un campo, el Activo.
-    @PatchMapping("/{id}")
-    public ResponseEntity<ProductoDto> desactivarProducto(@PathVariable Long id) {
-        ProductoDto desactivado = productoService.desactivarProducto(id);
-        return ResponseEntity.ok(desactivado);
+    @PatchMapping("/{id}/desactivar")
+    public ResponseEntity<Map<String, String>> desactivarProducto(@PathVariable Long id) {
+        productoService.desactivarProducto(id);
+        return ResponseEntity.ok(Map.of("mensaje", "Producto desactivado correctamente"));
+    }
+    //Activamos producto por si vuelve a estar disponible.
+    @PatchMapping("/{id}/activar")
+    public ResponseEntity<Map<String, String>> activarProducto(@PathVariable Long id) {
+        productoService.activarProducto(id);
+        return ResponseEntity.ok(Map.of("mensaje", "Producto activado correctamente"));
     }
 }
 
