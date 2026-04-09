@@ -31,6 +31,6 @@ public class Pedido {
     // Un pedido puede tener muchos artículos (líneas de pedido).
     // mappedBy indica que la relación se controla desde el campo 'pedido' de la clase PedidoProducto.
     // CascadeType.ALL es para la base de datos, que si guardas/borras el Pedido, sus líneas se guardan/borran solas.
-    @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PedidoProducto> lineasPedido; // Esta lista es el "carrito" o desglose de productos del ticket
 }

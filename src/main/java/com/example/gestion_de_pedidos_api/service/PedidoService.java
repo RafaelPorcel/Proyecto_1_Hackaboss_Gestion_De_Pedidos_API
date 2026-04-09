@@ -64,13 +64,10 @@ public class PedidoService {
             Integer cantidadCompradaProducto = entry.getValue();//Obtenemos la cantidad
 
             //Nos cercioramos de que el producto con ese Id exista
-            Producto productoComprado = productoRepository.findById(productoCompradoId)
-                    .orElseThrow(() -> new ResourceNotFoundException("Producto con id: " + productoCompradoId + " no encontrado"));
+            Producto productoComprado = obtenerProductoPorId(productoCompradoId);
 
             //Validar que el producto esté activo
-            if (!productoComprado.isActivo()) {
-                throw new BadRequestException("El producto " + productoComprado.getNombre() + " no está activo");
-            }
+            validarProductoActivo(productoComprado);
 
             //Creamos una lineaPedido que hay que agregarle a la lista de líneas de pedido
             PedidoProducto lineaPedido = new PedidoProducto();
@@ -80,7 +77,6 @@ public class PedidoService {
             lineaPedido.setPrecioUnitario(productoComprado.getPrecio());
             lineaPedido.setPedido(nuevoPedido);
             lineaPedido.setProducto(productoComprado);
-
 
 
             //Añadimos la lineaPedido a la lista de lineasPedido creada arriba
@@ -101,19 +97,14 @@ public class PedidoService {
 
     }
 
-
     // Añadir productos a un pedido (creacion de PedidoProducto)
     public ProductosPedidoDto agregarProductosAPedido(Long idPedido, PedidoProductoRequestDto dto) {
-        Pedido pedido = pedidoRepository.findById(idPedido)
-                .orElseThrow(() -> new ResourceNotFoundException("Pedido con id " + idPedido + " no encontrado"));
+        Pedido pedido = obtenerPedidoPorId(idPedido);
 
-        Producto producto = productoRepository.findById(dto.getProductoId())
-                .orElseThrow(() -> new ResourceNotFoundException("Producto con id " + dto.getProductoId() + " no encontrado"));
+        Producto producto = obtenerProductoPorId(dto.getProductoId());
 
         // Comprobar si el producto no está activo
-        if (!producto.isActivo()) {
-            throw new BadRequestException("El producto no está activo");
-        }
+        validarProductoActivo(producto);
 
         // Buscar si ya existe el producto en el pedido
         Optional<PedidoProducto> existente = pedido.getLineasPedido().stream()
@@ -137,9 +128,38 @@ public class PedidoService {
             pedido.getLineasPedido().add(pedidoProducto);
         }
 
+        pedido.setTotal(calcularTotalDelPedido(pedido));
         pedidoRepository.save(pedido);
 
         return pedidoProductoToDto(pedidoProducto);
+    }
+
+    // Eliminar producto de un pedido
+    public void eliminarProductoDePedido(Long pedidoId, Long productoId) {
+        // Buscar el pedido
+        Pedido pedido = obtenerPedidoPorId(pedidoId);
+
+        // Buscar la linea de productos del pedido
+        PedidoProducto linea = pedido.getLineasPedido().stream()
+                .filter(pp -> pp.getProducto().getId().equals(productoId))
+                .findFirst()
+                .orElseThrow(() -> new ResourceNotFoundException("El producto con id " + productoId + " no está en el pedido"));
+
+        // Eliminar la linea
+        pedido.getLineasPedido().remove(linea);
+
+        // Recalcular el total
+        pedido.setTotal(calcularTotalDelPedido(pedido));
+
+        // Guardar cambios
+        pedidoRepository.save(pedido);
+    }
+
+    public PedidoDto obtenerPedidoPorCodigo(String codigo) {
+        Pedido pedido = pedidoRepository.findByCodigo(codigo)
+                .orElseThrow(() -> new ResourceNotFoundException("Pedido con código " + codigo + " no encontrado"));
+
+        return pedidoToPedidoDto(pedido);
     }
 
     // Calculo del total del pedido
@@ -182,10 +202,29 @@ public class PedidoService {
         return pedidoToPedidoDto(pedido);
     }
 
+    private Pedido obtenerPedidoPorId(Long idPedido) {
+        return pedidoRepository.findById(idPedido)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Pedido con id " + idPedido + " no encontrado"));
+    }
+
+    private Producto obtenerProductoPorId(Long idProducto) {
+        return productoRepository.findById(idProducto)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Producto con id " + idProducto + " no encontrado"));
+    }
+
+    private void validarProductoActivo(Producto producto) {
+        if (!producto.isActivo()) {
+            throw new BadRequestException(
+                    "El producto " + producto.getNombre() + " no está activo");
+        }
+    }
+
     // *** MÉTODOS DE MAPEO ***
 
     //Método para transformar un Pedido en PedidoDto
-    private PedidoDto pedidoToPedidoDto (Pedido pedido) {
+    private PedidoDto pedidoToPedidoDto(Pedido pedido) {
         PedidoDto pedidoDto = new PedidoDto();
         pedidoDto.setId(pedido.getId());
         pedidoDto.setCodigo(pedido.getCodigo());
@@ -196,25 +235,23 @@ public class PedidoService {
 
         // Convertimos la lista de lineasPedido de la entidad Pedido a la lista de productos del PedidoDto
         List<ProductosPedidoDto> productosDto = pedido.getLineasPedido().stream()
-                    .map(this::pedidoProductoToDto) // Llamamos al segundo método de mapeo
-                    .toList();
-            pedidoDto.setProductos(productosDto);
-
+                .map(this::pedidoProductoToDto) // Llamamos al segundo método de mapeo
+                .toList();
+        pedidoDto.setProductos(productosDto);
 
         return pedidoDto;
     }
 
-    private ProductosPedidoDto pedidoProductoToDto (PedidoProducto linea) {
-        ProductosPedidoDto dto = new ProductosPedidoDto();
-        dto.setProductoId(linea.getProducto().getId());
-        dto.setNombreProducto(linea.getProducto().getNombre());
-        dto.setCantidad(linea.getCantidad());
-        dto.setPrecioUnitario(linea.getPrecioUnitario());
+    private ProductosPedidoDto pedidoProductoToDto(PedidoProducto linea) {
+        ProductosPedidoDto pedidoProductoToDto = new ProductosPedidoDto();
+        pedidoProductoToDto.setProductoId(linea.getProducto().getId());
+        pedidoProductoToDto.setNombreProducto(linea.getProducto().getNombre());
+        pedidoProductoToDto.setCantidad(linea.getCantidad());
+        pedidoProductoToDto.setPrecioUnitario(linea.getPrecioUnitario());
 
         // Calculamos el subtotal de esta línea de pedido
         dto.setSubtotal(linea.getCantidad() * linea.getPrecioUnitario());
 
         return dto;
     }
-
 }
