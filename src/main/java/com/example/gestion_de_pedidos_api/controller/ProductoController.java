@@ -71,7 +71,7 @@ public class ProductoController {
         productoService.desactivarProducto(id);
         return ResponseEntity.ok(Map.of("mensaje", "Producto desactivado correctamente"));
     }
-    //Activamos producto por si vuelve a estar disponible.
+    //Activamos producto por si vuelve a estar disponible
     @PatchMapping("/{id}/activar")
     public ResponseEntity<Map<String, String>> activarProducto(@PathVariable Long id) {
         productoService.activarProducto(id);
