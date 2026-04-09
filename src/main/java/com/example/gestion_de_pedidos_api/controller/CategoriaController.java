@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/categorias")
@@ -15,10 +16,13 @@ public class CategoriaController {
     private CategoriaService categoriaService;
 
     @PostMapping
-    public ResponseEntity<Categoria> crearCategoria(@RequestBody Categoria categoria) {
+    public ResponseEntity<Map<String, Object>> crearCategoria(@RequestBody Categoria categoria) {
         Categoria nuevaCategoria = categoriaService.guardarCategoria(categoria);
-        return ResponseEntity.ok(nuevaCategoria);
+        return ResponseEntity.ok(
+                Map.of("mensaje", "Categoría creada correctamente",
+                        "data", nuevaCategoria));
     }
+
 
     @GetMapping
     public ResponseEntity<List<Categoria>> listarCategorias() {
@@ -29,8 +33,8 @@ public class CategoriaController {
     @GetMapping("/{id}")
     public ResponseEntity<Categoria> obtenerPorId(@PathVariable Long id) {
         Categoria categoria = categoriaService.obtenerPorId(id);
-            return ResponseEntity.ok(categoria);
-        }
+        return ResponseEntity.ok(categoria);
     }
+}
 
 
