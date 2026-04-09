@@ -29,8 +29,17 @@ public class PedidoService {
     private ProductoRepository productoRepository;
 
     //Método listar todos los pedidos
-    public List<PedidoDto> listarPedidos() {
-        return pedidoRepository.findAll().stream()
+    public List<PedidoDto> listarPedidos(EstadoPedido estado) {
+        List<Pedido> pedidos;
+
+        // Si el estado tiene valor (se pide filtrar por estado) entonces devuelve la lista filtrada
+        if (estado != null) {
+            pedidos = pedidoRepository.findByEstadoPedidoOrderByFechaAsc(estado);
+        } else {
+            pedidos = pedidoRepository.findAllByOrderByFechaAsc();
+        }
+
+        return pedidos.stream()
                 .map(this::pedidoToPedidoDto) // Transformamos cada Pedido en PedidoDto
                 .toList();
     }
@@ -42,7 +51,7 @@ public class PedidoService {
         Pedido nuevoPedido = new Pedido();//Creamos un nuevo pedido y ahora lo armamos con los Dto
         //Asi sabemos el id de la terminal usada
         Terminal terminalUsada = terminalService.buscarTerminalPorId(crearPedidoDto.getTerminalId());
-        nuevoPedido.setCodigo("PED-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase());//Genera un código único
+        nuevoPedido.setCodigo("PED-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase()); //Genera un código único
         nuevoPedido.setFecha(LocalDateTime.now());
         nuevoPedido.setTerminal(terminalUsada);
 
@@ -96,10 +105,10 @@ public class PedidoService {
     // Añadir productos a un pedido (creacion de PedidoProducto)
     public ProductosPedidoDto agregarProductosAPedido(Long idPedido, PedidoProductoRequestDto dto) {
         Pedido pedido = pedidoRepository.findById(idPedido)
-                .orElseThrow(() -> new ResourceNotFoundException("El pedido con id " + idPedido + " no ha sido encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Pedido con id " + idPedido + " no encontrado"));
 
         Producto producto = productoRepository.findById(dto.getProductoId())
-                .orElseThrow(() -> new ResourceNotFoundException("El producto con id " + dto.getProductoId() + " no ha sido encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Producto con id " + dto.getProductoId() + " no encontrado"));
 
         // Comprobar si el producto no está activo
         if (!producto.isActivo()) {
@@ -145,9 +154,32 @@ public class PedidoService {
                 .doubleValue();
     }
 
-    //Gestion del cambio de estados (PREPARACION -> LISTO -> ENTREGADO)
-    public void gestionarEstadosDelPedido() {
+    // Gestion del cambio de estados de un pedido
+    public PedidoDto gestionarEstadoDelPedido(Long idPedido, EstadoPedido nuevoEstado) {
+        Pedido pedido = pedidoRepository.findById(idPedido)
+                .orElseThrow(() -> new ResourceNotFoundException("Pedido con id " + idPedido + " no encontrado"));
 
+        // Validar transición de estado
+        EstadoPedido estadoActual = pedido.getEstadoPedido();
+        /* estadoValido adquiere el valor true si el caso al que se expone es el que corresponde,
+        false si intenta cambiar a un estado que no es el siguiente en el orden */
+        boolean estadoValido = switch (estadoActual) {
+            case CREADO -> (nuevoEstado == EstadoPedido.PREPARACION);
+            case PREPARACION -> (nuevoEstado == EstadoPedido.LISTO);
+            case LISTO -> (nuevoEstado == EstadoPedido.PAGADO);
+            case PAGADO -> (nuevoEstado == EstadoPedido.ENTREGADO);
+            case ENTREGADO -> false;
+        };
+
+        if (!estadoValido) {
+            throw new BadRequestException("Transición de estado no permitida: " + estadoActual + " → " + nuevoEstado);
+        }
+
+        // Actualizar estado
+        pedido.setEstadoPedido(nuevoEstado);
+        pedidoRepository.save(pedido);
+
+        return pedidoToPedidoDto(pedido);
     }
 
     // *** MÉTODOS DE MAPEO ***
