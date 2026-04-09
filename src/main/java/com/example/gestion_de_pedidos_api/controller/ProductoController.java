@@ -22,10 +22,10 @@ public class ProductoController {
     @PostMapping
     public ResponseEntity<Map<String, Object>> crearProducto(@RequestBody CrearProductoDto dto) {
         ProductoDto producto = productoService.crearProducto(dto);
-        return ResponseEntity.ok(
-                Map.of(
-                        "mensaje", "Producto creado correctamente",
-                        "data", producto));
+        return ResponseEntity.status(HttpStatus.CREATED).body(Map.of(
+                "mensaje", "Producto creado correctamente",
+                "data", producto));
+
     }
 
     // List con filtros

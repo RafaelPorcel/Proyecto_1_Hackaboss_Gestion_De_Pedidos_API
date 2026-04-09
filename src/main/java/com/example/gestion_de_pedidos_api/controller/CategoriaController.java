@@ -3,6 +3,7 @@ package com.example.gestion_de_pedidos_api.controller;
 import com.example.gestion_de_pedidos_api.model.Categoria;
 import com.example.gestion_de_pedidos_api.service.CategoriaService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,9 +19,8 @@ public class CategoriaController {
     @PostMapping
     public ResponseEntity<Map<String, Object>> crearCategoria(@RequestBody Categoria categoria) {
         Categoria nuevaCategoria = categoriaService.guardarCategoria(categoria);
-        return ResponseEntity.ok(
-                Map.of("mensaje", "Categoría creada correctamente",
-                        "data", nuevaCategoria));
+        return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("mensaje", "Categoría creada correctamente",
+                "data", nuevaCategoria));
     }
 
 
