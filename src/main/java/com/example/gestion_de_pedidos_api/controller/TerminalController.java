@@ -1,5 +1,6 @@
 package com.example.gestion_de_pedidos_api.controller;
 
+import com.example.gestion_de_pedidos_api.dto.CrearTerminalDto;
 import com.example.gestion_de_pedidos_api.model.Terminal;
 import com.example.gestion_de_pedidos_api.service.TerminalService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +26,9 @@ public class TerminalController {
     }
 
     @PostMapping
-    public ResponseEntity<Terminal> crearTerminal(@RequestBody  Terminal nuevaTerminal) {
+    public ResponseEntity<Terminal> crearTerminal(@RequestBody CrearTerminalDto nuevaTerminalDto) {
+        Terminal nuevaTerminal = new Terminal();
+        nuevaTerminal.setNombre(nuevaTerminalDto.getNombre());
         return ResponseEntity.ok(terminalService.guardaTerminal(nuevaTerminal));
     }
 }
