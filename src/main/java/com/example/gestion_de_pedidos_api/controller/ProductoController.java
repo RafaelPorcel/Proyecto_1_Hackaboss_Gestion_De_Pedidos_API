@@ -64,18 +64,15 @@ public class ProductoController {
                         "data", producto));
     }
 
-    // Desactivar producto. Borrado logico.
-    // Patch por que no estamosa ctualizando todo el producto, solo un campo, el Activo.
-    @PatchMapping("/{id}")
-    public ResponseEntity<Map<String, String>> desactivarProducto(@PathVariable Long id) {
-        productoService.desactivarProducto(id);
-        return ResponseEntity.ok(Map.of("mensaje", "Producto desactivado correctamente"));
-    }
-    //Activamos producto por si vuelve a estar disponible
-    @PatchMapping("/{id}")
-    public ResponseEntity<Map<String, String>> activarProducto(@PathVariable Long id) {
-        productoService.activarProducto(id);
-        return ResponseEntity.ok(Map.of("mensaje", "Producto activado correctamente"));
+    // Desactivar producto. Borrado logico. O activar
+    @PatchMapping("/{id}/estado")
+    public ResponseEntity<Map<String, String>> cambiarEstado(
+            @PathVariable Long id,
+            @RequestParam boolean activo) {
+        productoService.cambiarEstado(id, activo);
+        return ResponseEntity.ok(Map.of(
+                "mensaje",
+                activo ? "Producto activado" : "Producto desactivado"));
     }
 }
 
