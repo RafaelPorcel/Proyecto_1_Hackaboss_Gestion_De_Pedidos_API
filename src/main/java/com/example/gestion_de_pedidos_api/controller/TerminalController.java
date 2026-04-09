@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/terminal")
+@RequestMapping("/api/terminales")
 public class TerminalController {
     @Autowired
     private TerminalService terminalService;

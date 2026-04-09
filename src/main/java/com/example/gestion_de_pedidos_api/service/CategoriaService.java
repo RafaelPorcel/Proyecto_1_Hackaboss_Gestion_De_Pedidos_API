@@ -1,5 +1,7 @@
 package com.example.gestion_de_pedidos_api.service;
 
+import com.example.gestion_de_pedidos_api.exception.IllegalStateException;
+import com.example.gestion_de_pedidos_api.exception.ResourceNotFoundException;
 import com.example.gestion_de_pedidos_api.model.Categoria;
 import com.example.gestion_de_pedidos_api.model.Producto;
 import com.example.gestion_de_pedidos_api.repository.CategoriaRepository;
@@ -22,12 +24,12 @@ public class CategoriaService {
     public Categoria guardarCategoria(Categoria categoria){
         Optional<Categoria> categoriaExistente=categoriaRepository.findByNombre(categoria.getNombre());
         if(categoriaExistente.isPresent()){
-            throw new RuntimeException("La categoria ya existe");
+            throw new IllegalStateException("La categoria ya existe");
         }
         return categoriaRepository.save(categoria);
     }
 //    Obtener categorias por id
     public Categoria obtenerPorId(Long id){
-        return categoriaRepository.findById(id).orElseThrow(()->new RuntimeException("Categoria no encontrada"));
+        return categoriaRepository.findById(id).orElseThrow(()->new ResourceNotFoundException("Categoria no encontrada"));
     }
 }
