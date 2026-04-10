@@ -18,7 +18,7 @@ public class Categoria {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 //    nombre de la columna no sea nulo y que no se repita.
-    @Column(name = "nombre", nullable = false, unique = true)
+    @Column(nullable = false, unique = true)
     private String nombre;
 
     @OneToMany(mappedBy = "categoria")
