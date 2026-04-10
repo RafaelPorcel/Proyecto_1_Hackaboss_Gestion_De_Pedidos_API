@@ -90,21 +90,13 @@ public class ProductoService {
         return toDto(guardado);
     }
 
-    //    Desactiva un producto(borrado logico)
-
-    public ProductoDto desactivarProducto(Long id) {
+    //    Desactiva un producto(borrado logico) o activa.
+    public void cambiarEstado(Long id, boolean activo) {
 
         Producto producto = productoRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Producto no encontrado"));
-        producto.setActivo(false);
-        Producto guardado = productoRepository.save(producto);
-        return toDto(guardado);
-    }
-    //  Activamos producto
-    public void activarProducto(Long id) {
-        Producto producto = productoRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Producto no encontrado"));
-        producto.setActivo(true);
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Producto con id " + id + " no encontrado"));
+        producto.setActivo(activo);
         productoRepository.save(producto);
     }
 
