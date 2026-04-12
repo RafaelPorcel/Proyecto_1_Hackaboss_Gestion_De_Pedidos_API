@@ -144,9 +144,13 @@ http://localhost:8080/doc/swagger-ui.html
 
 ### Colección Postman
 
-Colección con ejemplos de todos los endpoints:
+En la carpeta postman/ de este repositorio encontrarás el archivo Gestion de pedidos- hamburgueseria.postman_collection.json. 
 
-https://go.postman.co/collection/53102778-9fc441cb-8b31-4958-b797-d5da32ff9715?source=collection_link
+Para probar los endpoints:
+1. Abre Postman.
+2. Haz clic en *Import* (Importar).
+3. Selecciona o arrastra el archivo .json mencionado arriba.
+4. ¡Listo! Tendrás todas las peticiones configuradas.
 
 Cómo ejecutar el proyecto
 Clonar repositorio
