@@ -867,7 +867,7 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "http://localhost:8080/api/pedidos/codigo/PED-F2A94580?estado=listo",
+              "raw": "http://localhost:8080/api/pedidos?estado=LISTO",
               "protocol": "http",
               "host": [
                 "localhost"
@@ -875,15 +875,12 @@
               "port": "8080",
               "path": [
                 "api",
-                "pedidos",
-                "codigo",
-                "PED-F2A94580"
+                "pedidos"
               ],
               "query": [
                 {
                   "key": "estado",
-                  "value": "listo",
-                  "type": "text"
+                  "value": "LISTO"
                 }
               ]
             }
@@ -895,7 +892,7 @@
                 "method": "GET",
                 "header": [],
                 "url": {
-                  "raw": "http://localhost:8080/api/pedidos/codigo/PED-F2A94580?estado=preparacion",
+                  "raw": "http://localhost:8080/api/pedidos?estado=LISTO",
                   "protocol": "http",
                   "host": [
                     "localhost"
@@ -903,14 +900,12 @@
                   "port": "8080",
                   "path": [
                     "api",
-                    "pedidos",
-                    "codigo",
-                    "PED-F2A94580"
+                    "pedidos"
                   ],
                   "query": [
                     {
                       "key": "estado",
-                      "value": "preparacion"
+                      "value": "LISTO"
                     }
                   ]
                 }
