@@ -1,5 +1,7 @@
 package com.example.gestion_de_pedidos_api.service;
 
+import com.example.gestion_de_pedidos_api.dto.CategoriaDto;
+import com.example.gestion_de_pedidos_api.dto.CrearCategoriaDto;
 import com.example.gestion_de_pedidos_api.exception.IllegalStateException;
 import com.example.gestion_de_pedidos_api.exception.ResourceNotFoundException;
 import com.example.gestion_de_pedidos_api.model.Categoria;
@@ -17,19 +19,34 @@ public class CategoriaService {
     private CategoriaRepository categoriaRepository;
 
 //    Listar categorias
-    public List<Categoria> listarCategorias(){
-        return categoriaRepository.findAll();
+    public List<CategoriaDto> listarCategorias(){
+        return categoriaRepository.findAll().stream()
+                .map(this::toDto)
+                .toList();
     }
 //    Crear categorias
-    public Categoria guardarCategoria(Categoria categoria){
-        Optional<Categoria> categoriaExistente=categoriaRepository.findByNombre(categoria.getNombre());
+    public CategoriaDto guardarCategoria(CrearCategoriaDto crearCategoriaDto){
+        Optional<Categoria> categoriaExistente=categoriaRepository.findByNombre(crearCategoriaDto.getNombre());
         if(categoriaExistente.isPresent()){
             throw new IllegalStateException("La categoria ya existe");
         }
-        return categoriaRepository.save(categoria);
+
+        Categoria nuevaCategoria = new Categoria();
+        nuevaCategoria.setNombre(crearCategoriaDto.getNombre());
+        Categoria categoriaGuardada = categoriaRepository.save(nuevaCategoria);
+        return toDto(categoriaGuardada);//Este dto devolvemos
     }
 //    Obtener categorias por id
-    public Categoria obtenerPorId(Long id){
-        return categoriaRepository.findById(id).orElseThrow(()->new ResourceNotFoundException("Categoria no encontrada"));
+    public CategoriaDto obtenerPorId(Long id){
+        return toDto(categoriaRepository.findById(id).orElseThrow(()->new ResourceNotFoundException("Categoria no encontrada")));
+    }
+
+    // *** MÉTODOS DE MAPEO ***
+
+    private CategoriaDto toDto (Categoria categoria) {
+        CategoriaDto dto = new CategoriaDto();
+        dto.setId(categoria.getId());
+        dto.setNombre(categoria.getNombre());
+        return dto;
     }
 }

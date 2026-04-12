@@ -1,6 +1,6 @@
 -- TERMINALES
-INSERT INTO terminal (nombre) VALUES ('Caja Principal');
-INSERT INTO terminal (nombre) VALUES ('Caja Secundaria');
+INSERT INTO terminales (nombre) VALUES ('Caja Principal');
+INSERT INTO terminales (nombre) VALUES ('Caja Secundaria');
 
 -- CATEGORIAS
 INSERT INTO categorias (nombre) VALUES ('Comida');

@@ -20,8 +20,7 @@ public class GestionDePedidosApiApplication {
         return new OpenAPI().info(new Info()
                 .title("API de Gestión de Pedidos - Hackaboss")
                 .version("1.0.0")
-                .description("Sistema de gestión de pedidos para terminales de autoservicio.\n" +
-                        "\"Permite administrar productos, categorías y el flujo de estados de los tickets.")
+                .description("Sistema de gestión de pedidos para terminales de autoservicio. Permite administrar productos, categorías y el flujo de estados de los tickets.")
         );
     }
 
