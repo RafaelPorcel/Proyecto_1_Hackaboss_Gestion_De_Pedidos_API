@@ -1,9 +1,11 @@
 package com.example.gestion_de_pedidos_api.controller;
 
 import com.example.gestion_de_pedidos_api.dto.CrearTerminalDto;
+import com.example.gestion_de_pedidos_api.dto.TerminalDto;
 import com.example.gestion_de_pedidos_api.model.Terminal;
 import com.example.gestion_de_pedidos_api.service.TerminalService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,19 +18,22 @@ public class TerminalController {
     private TerminalService terminalService;
 
     @GetMapping
-    public ResponseEntity<List<Terminal>> listarTerminales() {
+    public ResponseEntity<List<TerminalDto>> listarTerminales() {
         return ResponseEntity.ok(terminalService.listarTerminales());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Terminal> terminalPorId(@PathVariable Long id) {
-        return ResponseEntity.ok(terminalService.buscarTerminalPorId(id));
+    public ResponseEntity<TerminalDto> terminalPorId(@PathVariable Long id) {
+        Terminal terminal = terminalService.buscarTerminalPorId(id);
+        //Aquí devolvemos un TerminalDto en lugar de un objeto Terminal
+        TerminalDto dto = new TerminalDto();
+        dto.setId(terminal.getId());
+        dto.setNombre(terminal.getNombre());
+        return ResponseEntity.ok(dto);
     }
 
     @PostMapping
-    public ResponseEntity<Terminal> crearTerminal(@RequestBody CrearTerminalDto nuevaTerminalDto) {
-        Terminal nuevaTerminal = new Terminal();
-        nuevaTerminal.setNombre(nuevaTerminalDto.getNombre());
-        return ResponseEntity.ok(terminalService.guardaTerminal(nuevaTerminal));
+    public ResponseEntity<TerminalDto> crearTerminal(@RequestBody CrearTerminalDto nuevaTerminalDto) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(terminalService.guardaTerminal(nuevaTerminalDto));
     }
 }
