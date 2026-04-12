@@ -1,7 +1,7 @@
 # Gestión de Pedidos API
 
 API REST desarrollada con **Spring Boot** para la gestión de pedidos en un entorno de terminales (tipo restaurante / cocina).  
-Permite gestionar terminales, categorías, prdouctos y pedidos con sus líneas de productos y control de estados.
+Permite gestionar terminales, categorías, productos y pedidos con sus líneas de productos y control de estados.
 
 ---
 
@@ -137,10 +137,16 @@ spring.datasource.password=
 spring.jpa.hibernate.ddl-auto=update
 spring.jpa.show-sql=true
 ---
-Documentación API (Swagger)
+## Documentación API (Swagger)
 
 Una vez ejecutado el proyecto:
 http://localhost:8080/doc/swagger-ui.html
+
+### Colección Postman
+
+Colección con ejemplos de todos los endpoints:
+
+https://go.postman.co/collection/53102778-9fc441cb-8b31-4958-b797-d5da32ff9715?source=collection_link
 
 Cómo ejecutar el proyecto
 Clonar repositorio
