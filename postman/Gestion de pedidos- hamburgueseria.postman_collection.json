@@ -12,24 +12,12 @@
       "item": [
         {
           "name": "GET/api/categorias",
-          "protocolProfileBehavior": {
-            "disableBodyPruning": true
-          },
           "request": {
             "auth": {
               "type": "noauth"
             },
             "method": "GET",
             "header": [],
-            "body": {
-              "mode": "raw",
-              "raw": "{\r\n  \"nombre\": \"Promociones Especiales\"\r\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
             "url": {
               "raw": "http://localhost:8080/api/categorias",
               "protocol": "http",
@@ -49,15 +37,6 @@
               "originalRequest": {
                 "method": "GET",
                 "header": [],
-                "body": {
-                  "mode": "raw",
-                  "raw": "{\r\n  \"nombre\": \"Promociones Especiales\"\r\n}",
-                  "options": {
-                    "raw": {
-                      "language": "json"
-                    }
-                  }
-                },
                 "url": {
                   "raw": "http://localhost:8080/api/categorias",
                   "protocol": "http",
@@ -88,7 +67,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n  \"nombre\": \"Promociones Especiales\"\r\n}",
+              "raw": "{\r\n  \"nombre\": \"Nuestros cafes\"\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -116,7 +95,7 @@
                 "header": [],
                 "body": {
                   "mode": "raw",
-                  "raw": "{\r\n  \"nombre\": \"Promociones Especiales\"\r\n}",
+                  "raw": "{\r\n  \"nombre\": \"Gluten free\"\r\n}",
                   "options": {
                     "raw": {
                       "language": "json"
@@ -136,33 +115,27 @@
                   ]
                 }
               },
-              "_postman_previewlanguage": null,
-              "header": null,
-              "cookie": [],
-              "body": null
+              "_postman_previewlanguage": "",
+              "header": [],
+              "cookie": [
+                {
+                  "expires": "Invalid Date",
+                  "domain": "",
+                  "path": ""
+                }
+              ],
+              "body": ""
             }
           ]
         },
         {
           "name": "GET/api/categorias/{id}",
-          "protocolProfileBehavior": {
-            "disableBodyPruning": true
-          },
           "request": {
             "auth": {
               "type": "noauth"
             },
             "method": "GET",
             "header": [],
-            "body": {
-              "mode": "raw",
-              "raw": "{\r\n  \"nombre\": \"Promociones Especiales\"\r\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
             "url": {
               "raw": "http://localhost:8080/api/categorias/5",
               "protocol": "http",
@@ -183,15 +156,6 @@
               "originalRequest": {
                 "method": "GET",
                 "header": [],
-                "body": {
-                  "mode": "raw",
-                  "raw": "{\r\n  \"nombre\": \"Promociones Especiales\"\r\n}",
-                  "options": {
-                    "raw": {
-                      "language": "json"
-                    }
-                  }
-                },
                 "url": {
                   "raw": "http://localhost:8080/api/categorias/5",
                   "protocol": "http",
@@ -220,24 +184,12 @@
       "item": [
         {
           "name": "GET/api/productos",
-          "protocolProfileBehavior": {
-            "disableBodyPruning": true
-          },
           "request": {
             "auth": {
               "type": "noauth"
             },
             "method": "GET",
             "header": [],
-            "body": {
-              "mode": "raw",
-              "raw": "{\r\n  \"nombre\": \"Bolitas de philadelphia\",\r\n  \"precio\": 3.40,\r\n  \"activo\": false,\r\n  \"categoriaId\": 4\r\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
             "url": {
               "raw": "http://localhost:8080/api/productos",
               "protocol": "http",
@@ -257,17 +209,8 @@
               "originalRequest": {
                 "method": "GET",
                 "header": [],
-                "body": {
-                  "mode": "raw",
-                  "raw": "{\r\n  \"nombre\": \"Bolitas de philadelphia\",\r\n  \"precio\": 3.40,\r\n  \"activo\": false,\r\n  \"categoriaId\": 4\r\n}",
-                  "options": {
-                    "raw": {
-                      "language": "json"
-                    }
-                  }
-                },
                 "url": {
-                  "raw": "http://localhost:8080/api/productos",
+                  "raw": "http://localhost:8080/api/productos?activo=true&orden=precio&tipoOrden=ASC",
                   "protocol": "http",
                   "host": [
                     "localhost"
@@ -276,13 +219,33 @@
                   "path": [
                     "api",
                     "productos"
+                  ],
+                  "query": [
+                    {
+                      "key": "activo",
+                      "value": "true"
+                    },
+                    {
+                      "key": "orden",
+                      "value": "precio"
+                    },
+                    {
+                      "key": "tipoOrden",
+                      "value": "ASC"
+                    }
                   ]
                 }
               },
-              "_postman_previewlanguage": null,
-              "header": null,
-              "cookie": [],
-              "body": null
+              "_postman_previewlanguage": "",
+              "header": [],
+              "cookie": [
+                {
+                  "expires": "Invalid Date",
+                  "domain": "",
+                  "path": ""
+                }
+              ],
+              "body": ""
             }
           ]
         },
@@ -324,7 +287,7 @@
                 "header": [],
                 "body": {
                   "mode": "raw",
-                  "raw": "{\r\n  \"nombre\": \"Bolitas de philadelphia\",\r\n  \"precio\": 3.40,\r\n  \"activo\": false,\r\n  \"categoriaId\": 4\r\n}",
+                  "raw": "{\r\n  \"nombre\": \"Hamburguesa sin Gluten\",\r\n  \"precio\": 3.40,\r\n  \"activo\": true,\r\n  \"categoriaId\": 6\r\n}",
                   "options": {
                     "raw": {
                       "language": "json"
@@ -344,10 +307,16 @@
                   ]
                 }
               },
-              "_postman_previewlanguage": null,
-              "header": null,
-              "cookie": [],
-              "body": null
+              "_postman_previewlanguage": "",
+              "header": [],
+              "cookie": [
+                {
+                  "expires": "Invalid Date",
+                  "domain": "",
+                  "path": ""
+                }
+              ],
+              "body": ""
             }
           ]
         },
@@ -361,7 +330,12 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n  \"nombre\": \"Promociones Especiales\"\r\n}"
+              "raw": "{\r\n  \"nombre\": \"Bolitas de philadelphia\",\r\n  \"precio\": 3.40,\r\n  \"activo\": false,\r\n  \"categoriaId\": 4\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
             "url": {
               "raw": "http://localhost:8080/api/productos/1",
@@ -382,10 +356,21 @@
               "name": "PUT/api/productos/{id}",
               "originalRequest": {
                 "method": "PUT",
-                "header": [],
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{\r\n  \"nombre\": \"Promociones Especiales\"\r\n}"
+                  "raw": "{\r\n  \"nombre\": \"Bolitas de philadelphia\",\r\n  \"precio\": 5.40,\r\n  \"activo\": true,\r\n  \"categoriaId\": 4\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
                 },
                 "url": {
                   "raw": "http://localhost:8080/api/productos/1",
@@ -401,10 +386,16 @@
                   ]
                 }
               },
-              "_postman_previewlanguage": null,
-              "header": null,
-              "cookie": [],
-              "body": null
+              "_postman_previewlanguage": "",
+              "header": [],
+              "cookie": [
+                {
+                  "expires": "Invalid Date",
+                  "domain": "",
+                  "path": ""
+                }
+              ],
+              "body": ""
             }
           ]
         },
@@ -466,26 +457,27 @@
               }
             },
             "url": {
-              "raw": "http://localhost:8080/terminal",
+              "raw": "http://localhost:8080/api/terminales",
               "protocol": "http",
               "host": [
                 "localhost"
               ],
               "port": "8080",
               "path": [
-                "terminal"
+                "api",
+                "terminales"
               ]
             }
           },
           "response": [
             {
-              "name": "POST/api/terminales",
+              "name": "POST/terminal",
               "originalRequest": {
                 "method": "POST",
                 "header": [],
                 "body": {
                   "mode": "raw",
-                  "raw": "{\r\n  \"nombre\": \"Kiosco Autoservicio\"\r\n}",
+                  "raw": "{\r\n  \"nombre\": \"Terraza 2\"\r\n}",
                   "options": {
                     "raw": {
                       "language": "json"
@@ -493,80 +485,68 @@
                   }
                 },
                 "url": {
-                  "raw": "http://localhost:8080/terminal",
+                  "raw": "http://localhost:8080/api/terminales",
                   "protocol": "http",
                   "host": [
                     "localhost"
                   ],
                   "port": "8080",
                   "path": [
-                    "terminal"
+                    "api",
+                    "terminales"
                   ]
                 }
               },
-              "_postman_previewlanguage": null,
-              "header": null,
-              "cookie": [],
-              "body": null
+              "_postman_previewlanguage": "",
+              "header": [],
+              "cookie": [
+                {
+                  "expires": "Invalid Date",
+                  "domain": "",
+                  "path": ""
+                }
+              ],
+              "body": ""
             }
           ]
         },
         {
           "name": "GET/api/terminales",
-          "protocolProfileBehavior": {
-            "disableBodyPruning": true
-          },
           "request": {
             "auth": {
               "type": "noauth"
             },
             "method": "GET",
             "header": [],
-            "body": {
-              "mode": "raw",
-              "raw": "{\r\n  \"nombre\": \"Kiosco Autoservicio\"\r\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
             "url": {
-              "raw": "http://localhost:8080/terminal",
+              "raw": "http://localhost:8080/api/terminales",
               "protocol": "http",
               "host": [
                 "localhost"
               ],
               "port": "8080",
               "path": [
-                "terminal"
+                "api",
+                "terminales"
               ]
             }
           },
           "response": [
             {
-              "name": "GET/api/terminales",
+              "name": "GET/terminal",
               "originalRequest": {
                 "method": "GET",
                 "header": [],
-                "body": {
-                  "mode": "raw",
-                  "raw": "{\r\n  \"nombre\": \"Kiosco Autoservicio\"\r\n}",
-                  "options": {
-                    "raw": {
-                      "language": "json"
-                    }
-                  }
-                },
                 "url": {
-                  "raw": "http://localhost:8080/terminal",
+                  "raw": "http://localhost:8080/api/terminales",
                   "protocol": "http",
                   "host": [
                     "localhost"
                   ],
                   "port": "8080",
                   "path": [
-                    "terminal"
+                    "api",
+                    "terminales"
                   ]
                 }
               },
@@ -579,33 +559,23 @@
         },
         {
           "name": "GET/api/terminales/{id}",
-          "protocolProfileBehavior": {
-            "disableBodyPruning": true
-          },
           "request": {
             "auth": {
               "type": "noauth"
             },
             "method": "GET",
             "header": [],
-            "body": {
-              "mode": "raw",
-              "raw": "{\r\n  \"nombre\": \"Kiosco Autoservicio\"\r\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
             "url": {
-              "raw": "http://localhost:8080/terminal",
+              "raw": "http://localhost:8080/api/terminales/1",
               "protocol": "http",
               "host": [
                 "localhost"
               ],
               "port": "8080",
               "path": [
-                "terminal"
+                "api",
+                "terminales",
+                "1"
               ]
             }
           },
@@ -626,7 +596,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n  \"codigo\": \"PED-001\",\r\n  \"terminalId\": 1,\r\n  \"estado\": \"PENDIENTE\",\r\n  \"productosComprados\": {\r\n    \"2\": 2,\r\n    \"4\": 1\r\n  }\r\n}",
+              "raw": "{\r\n  \"codigo\": \"PED-002\",\r\n  \"terminalId\": 1,\r\n  \"estado\": \"LISTO\",\r\n  \"productosComprados\": {\r\n    \"3\": 2,\r\n    \"5\": 1\r\n  }\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -654,7 +624,7 @@
                 "header": [],
                 "body": {
                   "mode": "raw",
-                  "raw": "{\r\n  \"codigo\": \"PED-001\",\r\n  \"terminalId\": 1,\r\n  \"estado\": \"PENDIENTE\",\r\n  \"productosComprados\": {\r\n    \"2\": 2,\r\n    \"4\": 1\r\n  }\r\n}",
+                  "raw": "{\r\n  \"codigo\": \"PED-003\",\r\n  \"terminalId\": 1,\r\n  \"estado\": \"ENTREGADO\",\r\n  \"productosComprados\": {\r\n    \"3\": 1,\r\n    \"5\": 1\r\n  }\r\n}",
                   "options": {
                     "raw": {
                       "language": "json"
@@ -674,10 +644,16 @@
                   ]
                 }
               },
-              "_postman_previewlanguage": null,
-              "header": null,
-              "cookie": [],
-              "body": null
+              "_postman_previewlanguage": "",
+              "header": [],
+              "cookie": [
+                {
+                  "expires": "Invalid Date",
+                  "domain": "",
+                  "path": ""
+                }
+              ],
+              "body": ""
             }
           ]
         },
@@ -725,7 +701,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n  \"productoId\": 2,\r\n  \"cantidad\": 2\r\n}",
+              "raw": "",
               "options": {
                 "raw": {
                   "language": "json"
@@ -756,7 +732,7 @@
                 "header": [],
                 "body": {
                   "mode": "raw",
-                  "raw": "{\r\n  \"productoId\": 2,\r\n  \"cantidad\": 2\r\n}",
+                  "raw": "",
                   "options": {
                     "raw": {
                       "language": "json"
@@ -764,7 +740,7 @@
                   }
                 },
                 "url": {
-                  "raw": "http://localhost:8080/api/pedidos/1/productos/2",
+                  "raw": "http://localhost:8080/api/pedidos/1/productos/3",
                   "protocol": "http",
                   "host": [
                     "localhost"
@@ -775,14 +751,20 @@
                     "pedidos",
                     "1",
                     "productos",
-                    "2"
+                    "3"
                   ]
                 }
               },
-              "_postman_previewlanguage": null,
-              "header": null,
-              "cookie": [],
-              "body": null
+              "_postman_previewlanguage": "",
+              "header": [],
+              "cookie": [
+                {
+                  "expires": "Invalid Date",
+                  "domain": "",
+                  "path": ""
+                }
+              ],
+              "body": ""
             }
           ]
         },
@@ -929,7 +911,7 @@
                 "method": "GET",
                 "header": [],
                 "url": {
-                  "raw": "http://localhost:8080/api/pedidos/codigo/PED-F2A94580?estado=listo",
+                  "raw": "http://localhost:8080/api/pedidos/codigo/PED-F2A94580?estado=preparacion",
                   "protocol": "http",
                   "host": [
                     "localhost"
@@ -944,16 +926,21 @@
                   "query": [
                     {
                       "key": "estado",
-                      "value": "listo",
-                      "type": "text"
+                      "value": "preparacion"
                     }
                   ]
                 }
               },
-              "_postman_previewlanguage": null,
-              "header": null,
-              "cookie": [],
-              "body": null
+              "_postman_previewlanguage": "",
+              "header": [],
+              "cookie": [
+                {
+                  "expires": "Invalid Date",
+                  "domain": "",
+                  "path": ""
+                }
+              ],
+              "body": ""
             }
           ]
         }
