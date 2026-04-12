@@ -24,8 +24,9 @@ public class TerminalService {
     }
 
     //Método para buscar una terminal mediante su Id
-    public Terminal buscarTerminalPorId(Long id) {
-        return terminalRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("La terminal con id: " + id + " no existe"));
+    public TerminalDto buscarTerminalPorId(Long id) {
+        Terminal terminal = terminalRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("La terminal con id: " + id + " no existe"));
+        return toDto(terminal);
     }
 
     //Método para guardar una nueva terminal
