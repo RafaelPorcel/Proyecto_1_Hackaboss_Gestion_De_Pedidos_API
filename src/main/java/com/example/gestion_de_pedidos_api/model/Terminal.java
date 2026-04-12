@@ -1,13 +1,16 @@
 package com.example.gestion_de_pedidos_api.model;
 
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.*;
 
 import java.util.List;
 
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
-@Data
-@Table(name = "terminal")
+@Table(name = "terminales")
 public class Terminal {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
