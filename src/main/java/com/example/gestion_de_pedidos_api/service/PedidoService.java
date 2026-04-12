@@ -1,14 +1,12 @@
 package com.example.gestion_de_pedidos_api.service;
 
-import com.example.gestion_de_pedidos_api.dto.CrearPedidoDto;
-import com.example.gestion_de_pedidos_api.dto.PedidoDto;
-import com.example.gestion_de_pedidos_api.dto.PedidoProductoRequestDto;
-import com.example.gestion_de_pedidos_api.dto.ProductosPedidoDto;
+import com.example.gestion_de_pedidos_api.dto.*;
 import com.example.gestion_de_pedidos_api.exception.BadRequestException;
 import com.example.gestion_de_pedidos_api.exception.ResourceNotFoundException;
 import com.example.gestion_de_pedidos_api.model.*;
 import com.example.gestion_de_pedidos_api.repository.PedidoRepository;
 import com.example.gestion_de_pedidos_api.repository.ProductoRepository;
+import com.example.gestion_de_pedidos_api.repository.TerminalRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,10 +21,9 @@ public class PedidoService {
     private PedidoRepository pedidoRepository;
     // Para poder acceder al método de encontrar terminal por Id
     @Autowired
-    private TerminalService terminalService;
-    // Para poder acceder a los productos y ver su precio
-    @Autowired
     private ProductoRepository productoRepository;
+    @Autowired
+    private TerminalRepository terminalRepository;
 
     //Método listar todos los pedidos
     public List<PedidoDto> listarPedidos(EstadoPedido estado) {
@@ -50,7 +47,8 @@ public class PedidoService {
     public PedidoDto registrarPedido(CrearPedidoDto crearPedidoDto) {
         Pedido nuevoPedido = new Pedido();//Creamos un nuevo pedido y ahora lo armamos con los Dto
         //Asi sabemos el id de la terminal usada
-        Terminal terminalUsada = terminalService.buscarTerminalPorId(crearPedidoDto.getTerminalId());
+        Terminal terminalUsada = obtenerIdTerminal(crearPedidoDto.getTerminalId());
+
         nuevoPedido.setCodigo("PED-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase()); //Genera un código único
         nuevoPedido.setFecha(LocalDateTime.now());
         nuevoPedido.setTerminal(terminalUsada);
@@ -228,6 +226,12 @@ public class PedidoService {
             throw new BadRequestException(
                     "El producto " + producto.getNombre() + " no está activo");
         }
+    }
+
+    private Terminal obtenerIdTerminal (Long terminalID) {
+        return terminalRepository.findById(terminalID)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "La terminal con id " + terminalID + " no existe"));
     }
 
     // *** MÉTODOS DE MAPEO ***

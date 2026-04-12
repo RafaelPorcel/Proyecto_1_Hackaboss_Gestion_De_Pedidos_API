@@ -24,12 +24,7 @@ public class TerminalController {
 
     @GetMapping("/{id}")
     public ResponseEntity<TerminalDto> terminalPorId(@PathVariable Long id) {
-        Terminal terminal = terminalService.buscarTerminalPorId(id);
-        //Aquí devolvemos un TerminalDto en lugar de un objeto Terminal
-        TerminalDto dto = new TerminalDto();
-        dto.setId(terminal.getId());
-        dto.setNombre(terminal.getNombre());
-        return ResponseEntity.ok(dto);
+        return ResponseEntity.ok(terminalService.buscarTerminalPorId(id));
     }
 
     @PostMapping
