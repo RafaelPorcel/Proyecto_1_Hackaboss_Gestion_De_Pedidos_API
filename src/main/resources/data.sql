@@ -81,9 +81,10 @@ INSERT INTO pedidos (codigo, fecha, total, estado_pedido, terminal_id)
 VALUES ('PED-CCCC3333', NOW(), 3.00, 'LISTO', 1);
 
 -- ==========================================
--- 5. PEDIDOS_PRODUCTOS (líneas de cada pedido)
+-- 5. PEDIDOS_PRODUCTOS (líneas de cada pedido) OPCIONAL
 -- ==========================================
 
+/*
 -- Pedido 1 (id 1)
 INSERT INTO pedidos_productos (cantidad, precio_unitario, pedido_id, producto_id)
 VALUES (2, 7.90, 1, 7);  -- 2x Classic Burger
@@ -101,3 +102,4 @@ VALUES (1, 2.90, 2, 1);  -- 1x Patatas Fritas Clásicas
 -- Pedido 3 (id 3)
 INSERT INTO pedidos_productos (cantidad, precio_unitario, pedido_id, producto_id)
 VALUES (2, 1.50, 3, 21); -- 2x Agua Mineral
+*/
